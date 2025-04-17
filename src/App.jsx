@@ -17,20 +17,20 @@ import ConfirmAppoinment from './component/DoctorInfo/ConfirmAppoinment';
 
 function App() {
   const location = useLocation();
-  const hideLayout = location.pathname === '/login';
+  const hideLayout = location.pathname === '/login' || location.pathname === '/register';
   return (
     <>
       {!hideLayout && <Header />}
 
       <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/info" element={<DoctorsInfo/>} />
+        <Route path="/" element={<Home />} />
+        <Route path="/info" element={<DoctorsInfo />} />
         {/* <Route path="/doctor-categories" element={<BottomDrawerModal/>} /> */}
-        <Route path="/all-doctors" element={<AllDoctors/>} />
-        <Route path="/doctor/:doctorId" element={<DoctorsInfo/>} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<RegisterPatient/>} />
-        <Route path="/confirm-appoinment" element={<ConfirmAppoinment/>} />
+        <Route path="/all-doctors" element={<AllDoctors />} />
+        <Route path="/doctor/:doctorId" element={<DoctorsInfo />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<RegisterPatient />} />
+        <Route path="/confirm-appoinment" element={<ConfirmAppoinment />} />
       </Routes>
 
       {!hideLayout && <Footer />}

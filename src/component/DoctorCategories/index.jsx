@@ -23,11 +23,11 @@ export default function Doctorcategories({ isOpen, setIsOpen }) {
       )}
 
       <div
-        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-y-0" : "translate-y-full"
-        }`}
+        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-y-0" : "translate-y-full"
+          }`}
       >
         <div className="p-4 max-h-[90vh] overflow-y-auto">
+          <div className="sticky top-0 bg-white z-50 pb-1">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold text-gray-800">
                 Find a Doctor
@@ -63,10 +63,11 @@ export default function Doctorcategories({ isOpen, setIsOpen }) {
                 />
               </div>
             </div>
+          </div>
 
           {/* Categories */}
           <div className="space-y-4">
-          {categories.map((item, i) => (
+            {categories.map((item, i) => (
               <div key={i} className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
                   {/* Replace with your icon if needed */}
