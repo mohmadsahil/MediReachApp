@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { FaArrowLeft } from "react-icons/fa";
 
-export const PatientEmail = ({ onSkip, onNext,onChange }) => {
+export const PatientEmail = ({ onSkip, onNext, onChange, onPrev }) => {
   const [email, setEmail] = useState('');
   console.log('Email', email);
   const isValidEmail = email.trim() !== '' && /\S+@\S+\.\S+/.test(email);
@@ -12,9 +13,9 @@ export const PatientEmail = ({ onSkip, onNext,onChange }) => {
   return (
     <div className="flex flex-col justify-between h-screen bg-[#2E3192] px-6 py-8 text-white">
       {/* Header */}
-      <div className="flex justify-end">
-        <button className="text-sm text-white opacity-70" onClick={onSkip}>
-          Skip
+      <div className="flex justify-between">
+        <button className="text-sm text-white opacity-70" onClick={onPrev}>
+          <FaArrowLeft />
         </button>
       </div>
 
@@ -31,19 +32,19 @@ export const PatientEmail = ({ onSkip, onNext,onChange }) => {
           <input
             id="email"
             type="email"
-            className="w-full border-b-2 bg-transparent border-white focus:outline-none text-white placeholder:text-white placeholder:opacity-50 py-2"
-            placeholder="Email"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="w-full border-b border-white bg-transparent text-white placeholder-gray-400 text-lg focus:outline-none pb-2 autofill:bg-transparent autofill:text-white"
+            autoComplete="off"
           />
         </div>
       </div>
 
       {/* Next button */}
       <button
-        className={`w-full py-4 text-lg font-semibold rounded-md mt-10 ${
-          isValidEmail ? 'bg-white text-[#2E3192]' : 'bg-white/30 text-white'
-        }`}
+        className={`w-full py-3 rounded-md text-white text-lg font-semibold transition duration-200 ${isValidEmail ? "bg-[#6A6FE9]" : "bg-[#6A6FE9]/50 cursor-not-allowed"
+          }`}
         disabled={!isValidEmail}
         onClick={handleNext}
       >

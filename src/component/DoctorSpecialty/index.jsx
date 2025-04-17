@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Doctorcategories from "../DoctorCategories";
+import { FaUserMd, FaBaby, FaEye, FaBrain, FaHandHoldingMedical } from "react-icons/fa";
 
 const specialties = [
-  { name: "Anesthesiology", color: "bg-purple-500" },
-  { name: "Pediatrics", color: "bg-red-500" },
-  { name: "Ophthalmology", color: "bg-blue-500" },
-  { name: "Mental Health", color: "bg-yellow-500" },
-  { name: "Dermatology", color: "bg-green-500" },
+  { name: "Anesthesiology", color: "bg-purple-500", icon: FaUserMd },  // Doctor icon
+  { name: "Pediatrics", color: "bg-red-500", icon: FaBaby },            // Baby icon
+  { name: "Ophthalmology", color: "bg-blue-500", icon: FaEye },          // Eye icon
+  { name: "Mental Health", color: "bg-yellow-500", icon: FaBrain },      // Brain icon
+  { name: "Dermatology", color: "bg-green-500", icon: FaHandHoldingMedical }, // Hand/Medical icon
 ];
 
 const DoctorSpecialty = () => {
@@ -30,9 +31,9 @@ const DoctorSpecialty = () => {
             <SwiperSlide key={index}>
               <div className="text-center">
                 <div
-                  className={`p-2 h-12 rounded-lg ${item.color} text-white text-xs font-semibold`}
+                  className={`py-3 rounded-lg ${item.color} text-white text-xs font-semibold`}
                 >
-                  {item.name.charAt(0)}
+                  <item.icon className="w-6 h-6 mx-auto" />
                 </div>
                 <p className="text-[7px]">{item.name}</p>
               </div>
@@ -40,7 +41,7 @@ const DoctorSpecialty = () => {
           ))}
         </Swiper>
       </div>
-        <Doctorcategories isOpen={isOpen} setIsOpen={setIsOpen} />
+      <Doctorcategories isOpen={isOpen} setIsOpen={setIsOpen} />
     </>
   );
 };
