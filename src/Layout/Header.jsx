@@ -5,10 +5,11 @@ import {
     FaMicrophone,
 } from "react-icons/fa";
 import { SideMenu } from "../component/SideMenu";
+import { getToken } from "../Utils/initToken";
 
 const Header = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
-
+    const {fullName} = getToken()
     return (
         <>
             {/* HEADER */}
@@ -22,8 +23,8 @@ const Header = () => {
                             onClick={() => setDrawerOpen(true)}
                         />
                         <div>
-                            <p className="text-white text-sm">Hi</p>
-                            <h2 className="text-xl font-bold">Akash Khan</h2>
+                            <p className="text-white text-sm">Hi,</p>
+                            <h2 className="text-md font-bold">{fullName}</h2>
                         </div>
                     </div>
                     <FaBell className="text-white text-xl" />

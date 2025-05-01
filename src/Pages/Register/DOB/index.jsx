@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
-export const PatientDOB = ({ onNext, onChange, onClick }) => {
+export const PatientDOB = ({ onNext, onChange, onClick, onPrev }) => {
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
   const months = [
     "January",
@@ -28,7 +29,6 @@ export const PatientDOB = ({ onNext, onChange, onClick }) => {
   const formattedMonth = monthIndex.toString().padStart(2, "0");
   const formattedDay = day.toString().padStart(2, "0");
   const formattedDOB = `${year}-${formattedMonth}-${formattedDay}`;
- 
 
   const handleNextClick = () => {
     onChange('dob', formattedDOB);
@@ -37,56 +37,69 @@ export const PatientDOB = ({ onNext, onChange, onClick }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#2B2F8C] flex flex-col justify-center items-center text-white px-4">
-      <div className="absolute top-6 text-sm text-white tracking-wide">
-        STEP 2/3
+    <div className="flex flex-col justify-between h-screen bg-[#2B2F8C] px-6 py-8 text-white">
+      {/* Header with arrow at top left */}
+      <div className="flex justify-between">
+        <button className="text-sm text-white opacity-70" onClick={onPrev}>
+          <FaArrowLeft/>
+        </button>
       </div>
 
-      <h1 className="text-4xl font-bold mb-2">Great!</h1>
-      <p className="text-lg mb-10">When’s your birthday?</p>
+      {/* Main content */}
+      <div className="flex flex-col items-center">
+        <h1 className="text-3xl font-bold mb-2">Great!</h1>
+        <p className="text-xl mb-10">When's your birthday?</p>
 
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md text-black shadow-lg">
-        <div className="flex justify-between space-x-4">
-          <select
-            className="flex-1 py-3 px-2 rounded-lg text-center text-lg bg-gray-100"
-            value={day}
-            onChange={(e) => setDay(Number(e.target.value))}
-          >
-            {days.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
+        <div className="bg-white rounded-2xl p-[10px] w-full max-w-md text-black shadow-lg">
+          <div className="flex justify-center space-x-4 overflow-visible">
+            <div className="flex-1 relative">
+              <select
+                className="w-full py-3 px-2 rounded-lg text-center text-lg "
+                value={day}
+                onChange={(e) => setDay(Number(e.target.value))}
+              >
+                {days.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <select
-            className="flex-1 py-3 px-2 rounded-lg text-center text-lg bg-gray-100"
-            value={month}
-            onChange={(e) => setMonth(e.target.value)}
-          >
-            {months.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
+            <div className="flex-1 relative">
+              <select
+                className="w-full py-3 px-2 rounded-lg text-center text-lg "
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}
+              >
+                {months.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <select
-            className="flex-1 py-3 px-2 rounded-lg text-center text-lg bg-gray-100"
-            value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
-          >
-            {years.map((y) => (
-              <option key={y} value={y}>
-                {y}
-              </option>
-            ))}
-          </select>
+            <div className="flex-1 relative">
+              <select
+                className="w-full py-3 px-2 rounded-lg text-center text-lg "
+                value={year}
+                onChange={(e) => setYear(Number(e.target.value))}
+              >
+                {years.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
+      {/* Next button */}
       <button
-        className="mt-10 bg-[#2563eb] hover:bg-blue-700 transition-colors px-10 py-3 rounded-full text-white text-lg font-medium"
+        className="w-full py-3 bg-[#6A6FE9] text-white text-lg font-semibold rounded-md transition-colors duration-300"
         onClick={handleNextClick}
       >
         Next
