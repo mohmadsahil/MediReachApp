@@ -1,11 +1,21 @@
 import React from "react";
 import BookSlot from "./BookSlot";
 import { useLocation, useParams } from "react-router-dom";
+import { useSlotByDoctorId } from "../../hooks/useDoctorServices";
 
 const DoctorsInfo = () => {
-  // const { doctorId } = useParams();
+  const { doctorId } = useParams();
   const { state } = useLocation();
   const doctor = state?.doctorData;
+
+  const {
+    data: slots,
+    isLoading,
+    isError,
+    error,
+  } = useSlotByDoctorId(doctorId);
+
+  // console.log("slots",slots)
 
   return (  
     <div className="max-w-md mx-auto bg-white shadow-md overflow-hidden border-gray-200">
@@ -43,7 +53,7 @@ const DoctorsInfo = () => {
           <span className="bg-blue-100 px-2 py-1 rounded">⭐ {doctor?.averageRating || 1.0}</span>
         </div>
       </div>
-      <BookSlot doctor={doctor}/>
+      <BookSlot doctor={doctor} slots={slots}/>
       <div className="px-4 py-4 bg-white">
         <h4 className="text-md font-semibold text-gray-800 mb-3">Patient Actions</h4>
         <div className="flex gap-3">

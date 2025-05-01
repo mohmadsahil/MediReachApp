@@ -6,24 +6,24 @@ const PopularDoctors = () => {
   const navigate = useNavigate();
   const [selectedDoctorId, setSelectedDoctorId] = useState(null);
   const { data: doctorData, isLoading, isError, error } = useDoctorList();
-  const {
-    data: doctorById,
-    isLoading: doctorByIdLoading,
-    isError: doctorByIdError,
-  } = useDoctorById(selectedDoctorId);
+  // const {
+  //   data: doctorById,
+  //   isLoading: doctorByIdLoading,
+  //   isError: doctorByIdError,
+  // } = useDoctorById(selectedDoctorId);
 
   const fetchDoctorData = doctorData?.data?.AllDoctors;
-  useEffect(() => {
-    if (doctorData) {
-      console.log("Fetched doctor data:", doctorData?.data?.AllUser);
-    }
-    if (doctorById) {
-      console.log("Doctor details:", doctorById);
-    }
-    if (isError) {
-      console.error("Error fetching doctor list:", error);
-    }
-  }, [doctorData, isError,doctorById]);
+  // useEffect(() => {
+  //   if (doctorData) {
+  //     console.log("Fetched doctor data:", doctorData?.data?.AllUser);
+  //   }
+  //   if (doctorById) {
+  //     console.log("Doctor details:", doctorById);
+  //   }
+  //   if (isError) {
+  //     console.error("Error fetching doctor list:", error);
+  //   }
+  // }, [doctorData, isError,doctorById]);
 
 
   // const handleDoctorClick = (doctorId) => {

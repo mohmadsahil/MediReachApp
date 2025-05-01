@@ -13,7 +13,7 @@ export default function PatientName({ onNext, onChange }) {
   return (
     <div className="min-h-screen bg-[#2B2F84] flex flex-col justify-between p-6 pt-10">
       <div>
-        <p className="text-white text-xl font-semibold mb-2">Hi</p>
+        <p className="text-white text-xl font-semibold mb-2">Hi,</p>
         <h1 className="text-white text-2xl font-bold mb-6">
           What's your name?
         </h1>

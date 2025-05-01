@@ -10,16 +10,59 @@ import {
   HiCheckCircle,
 } from "react-icons/hi";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useBookAppoinment } from "../../../hooks/usePatientServices";
+import {
+  useBookAppoinment,
+  useGetAllAddedPatients,
+} from "../../../hooks/usePatientServices";
 import { getToken } from "../../../Utils/initToken";
-import ConfirmModal from "../../ConfirmModal";
+import { ThankYouModal } from "../../ThankYouModal";
+import {
+  formatDate,
+  formatTime,
+  getFirstLetterCapital,
+} from "../../../Utils/utils";
+import { SelectNewPatient } from "../../AnotherPatient/SelectNewPatient";
 
 export default function ConfirmAppoinment() {
-  const [selectedPayment, setSelectedPayment] = useState("clinic");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { state } = useLocation();
   const navigate = useNavigate();
-  const bookSelectedSlot = state;
+  const state = useLocation();
+  const bookSelectedSlot = state?.state;
+  const doctorInfo = state?.state?.getDoctorData;
+  const [selectedPayment, setSelectedPayment] = useState(0);    //0 for clinic and 1 for online
+  const [selectedAmount, setSelectedAmount] = useState(
+    doctorInfo?.feesPerConsultation || 0
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddressOpen, setIsAddressOpen] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  const getSelectedPatientId = selectedPatient?.patientId;
+  const GetTokenData = getToken();
+  const getPatientId = GetTokenData?.patientId;
+  const {
+    mutate: fetchAllNewPatients,
+    data: getAllNewPatient,
+    loading: getAllNewPatientLoader,
+  } = useGetAllAddedPatients({ patientId: getPatientId });
+
+  const getAllAddedpatientData = getAllNewPatient?.data?.getAllPatient;
+
+  let getDefaultSelectedPatient = null;
+
+  if (Array.isArray(getAllAddedpatientData)) {
+    getDefaultSelectedPatient = getAllAddedpatientData.find(
+      (item) => item.patientId === getPatientId
+    );
+  }
+
+  const handlePaymentSelection = (mode) => {
+    setSelectedPayment(mode);
+
+    if (mode === 1) {
+      setSelectedAmount(110); // Online price fixed
+    } else if (mode === 0) {
+      setSelectedAmount(doctorInfo?.feesPerConsultation); // Clinic price dynamic
+    }
+  };
 
   const {
     mutate: slotBookMutate,
@@ -29,6 +72,10 @@ export default function ConfirmAppoinment() {
     error,
   } = useBookAppoinment();
 
+  const handleOpenModal = () => {
+    setIsAddressOpen(true);
+    // fetchAllNewPatients(getPatientId);
+  };
   const handleConfirm = () => {
     setIsModalOpen(false);
     navigate("/");
@@ -36,7 +83,7 @@ export default function ConfirmAppoinment() {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    navigate('/appoinmets')
+    navigate("/appoinmets");
   };
 
   const openModal = () => {
@@ -44,22 +91,24 @@ export default function ConfirmAppoinment() {
   };
 
   const confirmBooking = () => {
-    slotBookMutate(
-      {
-        doctorId: bookSelectedSlot.doctorId,
-        time: bookSelectedSlot.slot,
-        date: bookSelectedSlot.date,
-        patientId: getToken(),
+    const payload = {
+      doctorId: bookSelectedSlot.doctorId,
+      time: bookSelectedSlot.slot,
+      date: bookSelectedSlot.date,
+      patientId: selectedPatient ? getSelectedPatientId : getPatientId,
+      createdBy: getPatientId,
+      payementAmt:selectedAmount,
+      paymentStatus:selectedPayment,
+    };
+
+    slotBookMutate(payload, {
+      onSuccess: (data) => {
+        openModal();
       },
-      {
-        onSuccess: (data) => {
-          openModal();
-        },
-        onError: (err) => {
-          console.error("Error confirming booking:", err);
-        },
-      }
-    );
+      onError: (err) => {
+        console.error("Error confirming booking:", err);
+      },
+    });
   };
 
   return (
@@ -74,13 +123,15 @@ export default function ConfirmAppoinment() {
         {/* Doctor Info */}
         <div className="flex items-center gap-4 p-4">
           <img
-            src="https://via.placeholder.com/60"
+            src={doctorInfo?.profileImage}
             alt="Doctor"
             className="w-16 h-16 rounded-full border-2 border-blue-500"
           />
           <div>
-            <h2 className="text-lg font-semibold">Dr. Chanchal Choudhary</h2>
-            <p className="text-sm text-gray-500">Dermatologist</p>
+            <h2 className="text-lg font-semibold">{doctorInfo?.fullName}</h2>
+            <p className="text-sm text-gray-500">
+              {doctorInfo?.specialization}
+            </p>
             <div className="flex items-center gap-2 text-sm mt-1">
               <span className="text-green-600 font-medium">94%</span>
               <span className="text-gray-500">•</span>
@@ -99,8 +150,9 @@ export default function ConfirmAppoinment() {
             <p className="font-medium">Appointment time</p>
           </div>
           <p className="text-sm mt-1 ml-6 text-gray-600">
-            Thu, 17 Apr 04:00 PM{" "}
-            <span className="text-gray-400">• in 1 day</span>
+            {formatDate(bookSelectedSlot?.date)}{" "}
+            {formatTime(bookSelectedSlot?.slot)}
+            <span className="text-gray-400"> • in 1 day</span>
           </p>
         </div>
 
@@ -111,13 +163,14 @@ export default function ConfirmAppoinment() {
             <p className="font-medium">Clinic Details</p>
           </div>
           <p className="text-sm mt-1 ml-6 text-gray-600">
-            La Fameux Derma Skin And Hair Clinic, H Number, 5 Block A, Goutham
-            Buddha Nagar, Sector 50
+            {doctorInfo?.clinicName}
+            {" - "}
+            {doctorInfo?.clinicAddress}
           </p>
           <p className="text-sm text-purple-600 mt-2 ml-6 font-medium">
-            Practo Promise -{" "}
+            MediReach Promise -{" "}
             <span className="text-gray-600">
-              Appointment confirmed instantly
+              Appointment confirmed within 1h
             </span>
           </p>
         </div>
@@ -131,35 +184,36 @@ export default function ConfirmAppoinment() {
           {/* Online */}
           <div
             className={`flex items-center justify-between p-3 border rounded-lg mb-2 cursor-pointer ${
-              selectedPayment === "online"
+              selectedPayment === 1
                 ? "border-blue-500 bg-blue-50"
                 : "border-gray-300"
             }`}
-            onClick={() => setSelectedPayment("online")}
+            onClick={() => handlePaymentSelection(1)}
           >
             <div className="flex items-center gap-2">
               <HiOutlineCreditCard className="w-5 h-5 text-blue-500" />
               <span className="text-gray-700">Pay Online</span>
             </div>
             <div className="text-sm font-semibold text-green-600">
-              <span className="line-through text-gray-400 mr-1">₹800</span> ₹680
+              <span className="line-through text-gray-400 mr-1">{`₹${doctorInfo?.feesPerConsultation}`}</span>{" "}
+              ₹110
             </div>
           </div>
 
           {/* Clinic */}
           <div
             className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer ${
-              selectedPayment === "clinic"
+              selectedPayment === 0
                 ? "border-blue-500 bg-blue-50"
                 : "border-gray-300"
             }`}
-            onClick={() => setSelectedPayment("clinic")}
+            onClick={() => handlePaymentSelection(0)}
           >
             <div className="flex items-center gap-2">
               <HiOutlineCurrencyRupee className="w-5 h-5 text-blue-500" />
               <span className="text-gray-700">Pay At Clinic</span>
             </div>
-            <div className="text-sm font-semibold text-gray-700">₹800</div>
+            <div className="text-sm font-semibold text-gray-700">{`₹${doctorInfo?.feesPerConsultation}`}</div>
           </div>
         </div>
 
@@ -167,26 +221,34 @@ export default function ConfirmAppoinment() {
         <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
           <div className="flex items-center gap-3">
             <div className="bg-gray-800 text-white rounded-full w-8 h-8 flex items-center justify-center">
-              S
+              {getFirstLetterCapital(
+                selectedPatient?.fullName || getDefaultSelectedPatient?.fullName
+              )}
             </div>
             <div>
               <p className="text-sm text-gray-800">In-Clinic Appointment for</p>
-              <p className="font-medium">Sahil</p>
+              <p className="font-medium">
+                {selectedPatient?.fullName ||
+                  getDefaultSelectedPatient?.fullName}
+              </p>
             </div>
           </div>
-          <button className="text-blue-600 font-medium text-sm">CHANGE</button>
+          <button
+            className="text-blue-600 font-medium text-sm"
+            onClick={handleOpenModal}
+          >
+            CHANGE
+          </button>
         </div>
 
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white p-4 flex items-center justify-between mb-10">
           <div>
             <div className="flex items-center gap-1 text-gray-700">
-              <HiOutlineCurrencyRupee className="w-4 h-4 text-gray-600" />
-              <span className="text-sm">800</span>
+              <HiOutlineCurrencyRupee className="w-5 h-5 text-gray-600" />
+              {/* {console.log("selectedAmount",selectedAmount)} */}
+              <span className="text-md">{`${selectedAmount}${"/-"}`}</span>
             </div>
-            <button className="text-blue-600 text-xs underline flex items-center gap-1 mt-1">
-              <HiOutlineReceiptRefund className="w-4 h-4" /> View Bill
-            </button>
           </div>
           <button
             className="bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 transition-all"
@@ -196,10 +258,17 @@ export default function ConfirmAppoinment() {
           </button>
         </div>
       </div>
-      <ConfirmModal
+      <ThankYouModal
         isOpen={isModalOpen}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
+      />
+      <SelectNewPatient
+        setIsAddressOpen={setIsAddressOpen}
+        isAddressOpen={isAddressOpen}
+        getAllNewPatient={getAllNewPatient}
+        selectedPatient={selectedPatient}
+        setSelectedPatient={setSelectedPatient}
       />
     </>
   );

@@ -69,7 +69,6 @@ const Login = () => {
         {
           onSuccess: (data) => {
             const token = data?.data?.token;
-            console.log(token, "token");
             if (token) {
               localStorage.setItem("token", token);
               window.patientId = atob(token.split(".")[1]);

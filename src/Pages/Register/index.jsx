@@ -21,6 +21,7 @@ export const RegisterPatient = () => {
   });
   const nextStep = () => setStep((prev) => prev + 1);
   const skipStep = () => setStep((prev) => prev + 2);
+  const prevStep = () => setStep((prev) => prev - 1)
 
   const navigate = useNavigate();
   const {
@@ -44,6 +45,7 @@ export const RegisterPatient = () => {
     const getAllData = {
       ...data,
     };
+    
     patientRegisterMutate(getAllData, {
       onSuccess: (data) => {
         console.log("Patient Registered Successfully:", data);
@@ -69,16 +71,18 @@ export const RegisterPatient = () => {
             onNext={nextStep}
             onSkip={skipStep}
             onChange={handleChange}
+            onPrev={prevStep}
           />
         );
       case 2:
-        return <PatientGender onNext={nextStep} onChange={handleChange} />;
+        return <PatientGender onNext={nextStep} onChange={handleChange} onPrev={prevStep} />;
       case 3:
         return (
           <PatientDOB
             onNext={nextStep}
             onChange={handleChange}
             onClick={handleSubmit}
+            onPrev={prevStep}
           />
         );
     }
